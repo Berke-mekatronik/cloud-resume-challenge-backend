@@ -5,7 +5,7 @@ import os
 
 TABLE_NAME = os.environ.get("TABLE_NAME", "VisitorCounter")
 
-dynamodb = boto3.resource("dynamodb")
+dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
 table = dynamodb.Table(TABLE_NAME) # Table name must be exact same
 
 def lambda_handler(event, context):
