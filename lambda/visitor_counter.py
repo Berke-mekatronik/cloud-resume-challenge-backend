@@ -34,9 +34,3 @@ def lambda_handler(event, context):
         },
         'body': json.dumps({'count': visitor_count})
     }
-
-# visitor_counter.py
-
-def lambda_handler(event, context):
-    # test trigger comment
-    pass
