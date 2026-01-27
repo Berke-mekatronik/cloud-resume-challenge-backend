@@ -1,8 +1,12 @@
 import json
 import boto3
+import os
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('VisitorCounter') # Table name must be exact same
+
+TABLE_NAME = os.environ.get("TABLE_NAME", "VisitorCounter")
+
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table(TABLE_NAME) # Table name must be exact same
 
 def lambda_handler(event, context):
     # Get current count
@@ -30,3 +34,9 @@ def lambda_handler(event, context):
         },
         'body': json.dumps({'count': visitor_count})
     }
+
+# visitor_counter.py
+
+def lambda_handler(event, context):
+    # test trigger comment
+    pass

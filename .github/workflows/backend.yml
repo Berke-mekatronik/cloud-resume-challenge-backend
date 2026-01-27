@@ -1,0 +1,47 @@
+name: Backend CI/CD
+
+on:
+  push:
+    paths:
+      - "cloud-resume-challenge-backend/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r cloud-resume-challenge-backend/requirements.txt
+        pip install pytest boto3 moto
+
+    - name: Run tests
+      run: |
+        pytest cloud-resume-challenge-backend/lambda
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      working-directory: cloud-resume-challenge-backend/infra
+      run: terraform init
+
+    - name: Terraform Plan
+      working-directory: cloud-resume-challenge-backend/infra
+      run: terraform plan
+
+    - name: Terraform Apply
+      working-directory: cloud-resume-challenge-backend/infra
+      run: terraform apply -auto-approve
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
