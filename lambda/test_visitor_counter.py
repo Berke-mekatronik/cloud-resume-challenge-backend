@@ -10,6 +10,7 @@ from visitor_counter import lambda_handler
 def test_lambda_increments_visitor_count():
     # Arrange
     os.environ["TABLE_NAME"] = "VisitorCounter"
+    os.environ["AWS_REGION"] = "eu-central-1"
 
     dynamodb = boto3.resource("dynamodb", region_name="eu-central-1")
 

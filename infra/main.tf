@@ -125,6 +125,7 @@ resource "aws_lambda_function" "visitor_lambda" {
   environment {
     variables = {
       TABLE_NAME = aws_dynamodb_table.visitor_table.name
+      AWS_REGION  = var.aws_region
     }
   }
 }
