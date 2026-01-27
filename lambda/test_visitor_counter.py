@@ -2,10 +2,11 @@ import json
 import os
 import boto3
 import pytest
-from moto import mock_dynamodb
+from moto import mock_aws
+from visitor_counter import lambda_handler
 
 # Import AFTER mocking
-@mock_dynamodb
+@mock_aws
 def test_lambda_increments_visitor_count():
     # Arrange
     os.environ["TABLE_NAME"] = "VisitorCounter"
@@ -43,7 +44,7 @@ def test_lambda_increments_visitor_count():
     assert response["statusCode"] == 200
     assert body["count"] == 6
 
-@mock_dynamodb
+@mock_aws
 def test_lambda_creates_initial_counter():
     os.environ["TABLE_NAME"] = "VisitorCounter"
 
@@ -60,7 +61,7 @@ def test_lambda_creates_initial_counter():
         BillingMode="PAY_PER_REQUEST"
     )
 
-    from visitor_counter import lambda_handler
+    
 
     response = lambda_handler({}, {})
     body = json.loads(response["body"])
