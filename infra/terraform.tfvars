@@ -1,0 +1,1 @@
+bucket_name = "berke-cloud-resume"
