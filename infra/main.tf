@@ -6,33 +6,28 @@ resource "aws_s3_bucket" "resume_bucket" {
 resource "aws_s3_bucket_public_access_block" "resume_bucket_public" {
   bucket = aws_s3_bucket.resume_bucket.id
 
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_policy" "resume_bucket_policy" {
-  bucket = aws_s3_bucket.resume_bucket.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect    = "Allow"
-      Principal = "*"
-      Action    = "s3:GetObject"
-      Resource  = "${aws_s3_bucket.resume_bucket.arn}/*"
-    }]
-  })
+resource "aws_cloudfront_origin_access_control" "oac" {
+  name                              = "resume-oac"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
 
 resource "aws_cloudfront_distribution" "resume_cdn" {
   enabled = true
 
   origin {
-    domain_name = aws_s3_bucket.resume_bucket.bucket_regional_domain_name
-    origin_id   = "s3-origin"
-  }
+  domain_name = aws_s3_bucket.resume_bucket.bucket_regional_domain_name
+  origin_id   = "S3Origin"
+
+  origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
+}
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
