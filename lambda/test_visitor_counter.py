@@ -62,8 +62,6 @@ def test_lambda_creates_initial_counter():
         BillingMode="PAY_PER_REQUEST"
     )
 
-    
-
     response = lambda_handler({}, {})
     body = json.loads(response["body"])
 
