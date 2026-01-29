@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  deploy:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,33 +21,30 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install pytest boto3 moto
 
       - name: Run tests
-        run: pytest
+        run: |
+          pytest lambda
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         working-directory: infra
-        run: terraform init
+        run: terraform init -input=false
+
+      - name: Terraform Validate
+        working-directory: infra
+        run: terraform validate
 
       - name: Terraform Plan
         working-directory: infra
         run: terraform plan -input=false
-
-      - name: Package Lambda
-        run: |
-          cd lambda
-          zip -r ../infra/lambda.zip visitor_counter.py
-
-      - name: Terraform Apply
-        working-directory: infra
-        run: terraform apply -auto-approve -input=false

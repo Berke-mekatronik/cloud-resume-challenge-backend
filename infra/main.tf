@@ -24,7 +24,7 @@ resource "aws_cloudfront_distribution" "resume_cdn" {
 
   origin {
   domain_name = aws_s3_bucket.resume_bucket.bucket_regional_domain_name
-  origin_id   = "S3Origin"
+  origin_id   = "s3-origin"
 
   origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
 }
