@@ -62,7 +62,7 @@ resource "aws_dynamodb_table" "visitor_table" {
 
   attribute {
     name = "id"
-    type = "S"
+    type = "N"
   }
 }
 
@@ -114,15 +114,13 @@ resource "aws_lambda_function" "visitor_lambda" {
   handler       = "visitor_counter.lambda_handler"
   role          = aws_iam_role.lambda_role.arn
 
-  filename         = "lambda.zip"
-  source_code_hash = filebase64sha256("lambda.zip")
+  filename      = "cloud-resume-challenge-backend/infra/lambda.zip"
 
   environment {
-    variables = {
-      TABLE_NAME = aws_dynamodb_table.visitor_table.name
-      AWS_REGION  = var.aws_region
-    }
+  variables = {
+    TABLE_NAME = aws_dynamodb_table.visitor_table.name
   }
+}
 }
 
 resource "aws_api_gateway_rest_api" "resume_api" {

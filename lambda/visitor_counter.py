@@ -5,7 +5,7 @@ import boto3
 def get_table():
     dynamodb = boto3.resource(
         "dynamodb",
-        region_name=os.environ.get("AWS_REGION", "eu-central-1")
+        region_name=os.environ.get("AWS_REGION")
     )
     return dynamodb.Table(os.environ["TABLE_NAME"])
 
